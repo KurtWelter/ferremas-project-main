@@ -35,7 +35,6 @@ const TableHeader = styled.header`
 
 function ProductTable() {
   const [cart, setCart] = useState([]); // Definición de setCart
-  console.log(cart);
   // Función para agregar un producto al carrito
   const addToCart = (product) => {
     setCart([...cart, product]);

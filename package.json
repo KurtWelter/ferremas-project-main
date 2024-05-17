@@ -23,6 +23,7 @@
     "react-router-dom": "^6.23.0",
     "redux": "^5.0.1",
     "styled-components": "^6.1.8",
+    "transbank-sdk": "^5.0.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

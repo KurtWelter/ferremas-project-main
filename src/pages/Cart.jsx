@@ -1,21 +1,22 @@
 import {useState} from "react";
 import {useCartStore} from "../store/CartStore";
+import {makePayment} from "../services/apiTransbank";
 
 function Cart() {
   const {cart} = useCartStore();
-  // Función para agregar un producto al carrito
-  /* const addToCart = (product) => {
-    console.log("Adding to cart:", product); // Verifica que se esté llamando la función addToCart
-    setCart([...cart, product]);
-    console.log("Cart after adding:", cart); // Verifica el estado del carrito después de agregar el producto
-  };*/
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Función para eliminar un producto del carrito
-  /*const removeFromCart = (productToRemove) => {
-    console.log("Removing from cart:", productToRemove); // Verifica que se esté llamando la función removeFromCart
-    setCart(cart.filter((product) => product !== productToRemove));
-    console.log("Cart after removing:", cart); // Verifica el estado del carrito después de eliminar el producto
-  };*/
+  const handlePayClick = async () => {
+    setIsLoading(true);
+    try {
+      const {url} = await makePayment();
+      window.location.href = url;
+    } catch (error) {
+      console.log("Error al realizar el pago:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Función para calcular el precio total del carrito
   const totalPrice = cart.reduce((total, product) => total + product.price, 0);
@@ -33,6 +34,9 @@ function Cart() {
         ))}
       </div>
       <p>Total Price: ${totalPrice}</p>
+      <button onClick={handlePayClick} disabled={isLoading}>
+        {isLoading ? "Procesando pago..." : "Ir a pagar"}
+      </button>
     </div>
   );
 }

@@ -52,7 +52,6 @@ const Discount = styled.div`
 
 function ProductRow({product}) {
   const {addToCart, cart} = useCartStore();
-  console.log(cart);
   const {name, description, price, stock, discount, image} = product;
 
   /*const handleBuyClick = () => {
