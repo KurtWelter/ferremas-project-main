@@ -1,6 +1,7 @@
 import Heading from "../ui/Heading";
 import Row from "../ui/Row";
 import styled from "styled-components";
+import {useCartStore} from "../store/CartStore";
 
 // Define un nuevo componente styled para el contenedor de los productos
 const ProductsContainer = styled.div`
@@ -44,8 +45,21 @@ const ProductContainer = styled.div`
     color: #007bff;
   }
 `;
+const BuyButton = styled.button`
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 16px;
 
-// Suponiendo que tienes datos de productos en un array llamado 'products'
+  &:hover {
+    background-color: #218838;
+  }
+`;
+
 const products = [
   {
     id: 1,
@@ -53,6 +67,7 @@ const products = [
     price: "94,563",
     image:
       "https://ktwfuspublsbvwuoxzvf.supabase.co/storage/v1/object/public/products-images/Bosch-1600A0265-ProClick-Tool-Belt-Kit.avif",
+    category: "Workwear",
   },
   {
     id: 2,
@@ -60,6 +75,7 @@ const products = [
     price: "107,375",
     image:
       "https://ktwfuspublsbvwuoxzvf.supabase.co/storage/v1/object/public/products-images/CS11NAR.avif",
+    category: "Workwear",
   },
   {
     id: 3,
@@ -67,6 +83,7 @@ const products = [
     price: "212,829",
     image:
       "https://ktwfuspublsbvwuoxzvf.supabase.co/storage/v1/object/public/products-images/DEW-DeWalt-Ring-Shank-Galvanised-Coil-Nails.avif?t=2024-05-15T21%3A10%3A33.184Z",
+    category: "Fixings & Fasteners",
   },
   {
     id: 4,
@@ -74,6 +91,7 @@ const products = [
     price: "2,385",
     image:
       "https://ktwfuspublsbvwuoxzvf.supabase.co/storage/v1/object/public/products-images/FORFFT312Y.jpg",
+    category: "Fixings & Fasteners",
   },
   {
     id: 5,
@@ -81,6 +99,7 @@ const products = [
     price: "1,565,991",
     image:
       "https://ktwfuspublsbvwuoxzvf.supabase.co/storage/v1/object/public/products-images/PT1150SC.V4_DFC1489464.avif",
+    category: "Ladders & Sack Trucks",
   },
   {
     id: 6,
@@ -88,6 +107,7 @@ const products = [
     price: "128,072",
     image:
       "https://ktwfuspublsbvwuoxzvf.supabase.co/storage/v1/object/public/products-images/RAW-KEMKIT1-Rawl-R-KEM-II-Kemfast-Polyester-Anchor-Masonry-Fixing-Kit.avif",
+    category: "Fixings & Fasteners",
   },
   {
     id: 7,
@@ -95,6 +115,7 @@ const products = [
     price: "19,600",
     image:
       "https://ktwfuspublsbvwuoxzvf.supabase.co/storage/v1/object/public/products-images/ROU11005.avif",
+    category: "Hand Tools",
   },
   {
     id: 8,
@@ -102,6 +123,7 @@ const products = [
     price: "19,600",
     image:
       "https://ktwfuspublsbvwuoxzvf.supabase.co/storage/v1/object/public/products-images/ROU65622.webp",
+    category: "Hand Tools",
   },
   {
     id: 9,
@@ -109,6 +131,7 @@ const products = [
     price: "34,445",
     image:
       "https://ktwfuspublsbvwuoxzvf.supabase.co/storage/v1/object/public/products-images/S01001.V3_DFC0247473.avif",
+    category: "Welding Tools",
   },
   {
     id: 10,
@@ -116,6 +139,7 @@ const products = [
     price: "18,676",
     image:
       "https://ktwfuspublsbvwuoxzvf.supabase.co/storage/v1/object/public/products-images/SSP151.V2_DFC1449466.webp",
+    category: "Welding Tools",
   },
   {
     id: 11,
@@ -123,6 +147,7 @@ const products = [
     price: "16,705",
     image:
       "https://ktwfuspublsbvwuoxzvf.supabase.co/storage/v1/object/public/products-images/SW10TAR.jpg",
+    category: "Welding Tools",
   },
   {
     id: 12,
@@ -130,26 +155,42 @@ const products = [
     price: "442,463",
     image:
       "https://ktwfuspublsbvwuoxzvf.supabase.co/storage/v1/object/public/products-images/70043_1.jpg",
+    category: "Welding Tools",
   },
-  // Agrega más productos según sea necesario
 ];
+const groupByCategory = (products) => {
+  return products.reduce((acc, product) => {
+    const {category} = product;
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(product);
+    return acc;
+  }, {});
+};
 
 function Dashboard() {
+  const groupedProducts = groupByCategory(products);
+
   return (
     <div>
       <Row type="horizontal">
-        <Heading as="h1">Home</Heading>
+        <Heading as="h1"></Heading>
       </Row>
-      {/* Utiliza el nuevo componente ProductsContainer para contener los productos */}
-      <ProductsContainer>
-        {products.map((product) => (
-          <ProductContainer key={product.id}>
-            <img src={product.image} alt={product.name} />
-            <p>{product.name}</p>
-            <p className="price">Precio: ${product.price}</p>
-          </ProductContainer>
-        ))}
-      </ProductsContainer>
+      {Object.entries(groupedProducts).map(([category, products]) => (
+        <div key={category}>
+          <Heading as="h2">{category}</Heading>
+          <ProductsContainer>
+            {products.map((product) => (
+              <ProductContainer key={product.id}>
+                <img src={product.image} alt={product.name} />
+                <p>{product.name}</p>
+                <p className="price">Precio: ${product.price}</p>
+              </ProductContainer>
+            ))}
+          </ProductsContainer>
+        </div>
+      ))}
     </div>
   );
 }
