@@ -4,7 +4,11 @@ export const realizarPago = async (cart) => {
   try {
     const buyOrder = `order-${Date.now()}`;
     const sessionId = `session-${Date.now()}`;
-    const amount = cart.reduce((total, product) => total + product.price, 0); // Corrección aquí
+    const amount = cart.reduce(
+      (total, product) => total + product.price * product.quantity,
+      0
+    );
+
     const returnUrl = "http://localhost:5173/dashboard";
 
     const response = await axios.post(

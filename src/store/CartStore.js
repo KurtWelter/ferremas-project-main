@@ -1,15 +1,21 @@
 import {create} from "zustand";
 
-/*export const useCartStore = create((set) => ({
-  bears: 0,
-  increasePopulation: () => set((state) => ({bears: state.bears + 1})),
-  removeAllBears: () => set({bears: 0}),
-  updateBears: (newBears) => set({bears: newBears}),
-}));*/
-
 export const useCartStore = create((set) => ({
   cart: [],
-  addToCart: (product) => set((state) => ({cart: [...state.cart, product]})),
+  addToCart: (product) =>
+    set((state) => {
+      const existingProduct = state.cart.find((p) => p.id === product.id);
+      if (existingProduct) {
+        return {
+          cart: state.cart.map((p) =>
+            p.id === product.id ? {...p, quantity: p.quantity + 1} : p
+          ),
+        };
+      }
+      return {
+        cart: [...state.cart, {...product, quantity: product.quantity || 1}],
+      };
+    }),
   removeFromCart: (productId) =>
     set((state) => ({
       cart: state.cart.filter((product) => product.id !== productId),

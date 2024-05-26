@@ -1,26 +1,12 @@
-import supabase from "./supabase";
-
-export async function getProducts() {
-  const {data, error} = await supabase.from("products").select("*");
-
-  if (error) {
-    console.error(error);
-    throw new Error("Products could not be loaded");
+export async function fetchProducts() {
+  try {
+    const response = await fetch("http://localhost:3000/products");
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
   }
-
-  return data;
-}
-
-export async function createProduct(newProduct) {
-  const {data, error} = await supabase
-    .from("products")
-    .insert([newProduct])
-    .select();
-
-  if (error) {
-    console.error(error);
-    throw new Error("Products could not be created");
-  }
-
-  return data;
 }

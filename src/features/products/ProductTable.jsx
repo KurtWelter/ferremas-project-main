@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {useQuery} from "@tanstack/react-query";
-import {getProducts} from "../../services/apiProducts";
+import {fetchProducts} from "../../services/apiProducts";
 import Spinner from "../../ui/Spinner";
 import styled from "styled-components";
 import ProductRow from "./ProductRow";
@@ -46,7 +46,7 @@ function ProductTable() {
     error,
   } = useQuery({
     queryKey: ["products"],
-    queryFn: getProducts,
+    queryFn: fetchProducts,
   });
 
   if (isLoading) return <Spinner />;

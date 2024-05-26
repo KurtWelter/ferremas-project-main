@@ -3,7 +3,6 @@ import styled from "styled-components";
 import {useCartStore} from "../store/CartStore";
 import {realizarPago} from "../services/apiTransbank";
 
-// Estilos para los elementos del carro de compras
 const CartContainer = styled.div`
   background-color: #fff;
   border-radius: 10px;
@@ -68,6 +67,21 @@ const PayButton = styled.button`
   }
 `;
 
+const Button = styled.button`
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 0 5px;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
 const TransferButton = styled.button`
   background-color: #28a745;
   color: #fff;
@@ -89,26 +103,25 @@ const TransferDetails = styled.div`
 
 function Cart() {
   const {cart, incrementQuantity, decrementQuantity} = useCartStore();
-  const [isLoading, setIsLoading] = useState(false); // Estado para manejar la carga
-  const [isTransferShown, setIsTransferShown] = useState(false); // Estado para mostrar los detalles de transferencia
+  const [isLoading, setIsLoading] = useState(false);
+  const [isTransferShown, setIsTransferShown] = useState(false);
 
-  // Función para manejar el clic en el botón "Ir a pagar"
   const handlePayClick = async () => {
-    setIsLoading(true); // Activa el indicador de carga
+    setIsLoading(true);
     try {
-      await realizarPago(cart); // Llama a la función realizarPago para iniciar la transacción
+      await realizarPago(cart);
     } catch (error) {
       console.error("Error al iniciar la transacción:", error);
-      // Maneja el error según sea necesario
     } finally {
-      setIsLoading(false); // Desactiva el indicador de carga una vez que se complete la transacción o haya ocurrido un error
+      setIsLoading(false);
     }
   };
 
-  // Función para calcular el precio total del carrito
-  const totalPrice = cart.reduce((total, product) => total + product.price, 0);
+  const totalPrice = cart.reduce(
+    (total, product) => total + product.price * product.quantity,
+    0
+  );
 
-  // Función para mostrar u ocultar los detalles de transferencia
   const handleTransferClick = () => {
     setIsTransferShown(!isTransferShown);
   };
@@ -127,9 +140,9 @@ function Cart() {
               </div>
             </ProductInfo>
             <div>
-              <button onClick={() => incrementQuantity(product.id)}>+</button>
+              <Button onClick={() => incrementQuantity(product.id)}>+</Button>
               {product.quantity}
-              <button onClick={() => decrementQuantity(product.id)}>-</button>
+              <Button onClick={() => decrementQuantity(product.id)}>-</Button>
             </div>
           </ProductRow>
         ))}

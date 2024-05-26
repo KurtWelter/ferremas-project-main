@@ -1,29 +1,22 @@
-import supabase from "./supabase";
+import axios from "axios";
 
-export async function signup({fullName, email, password}) {
-  const {data, error} = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        fullName,
-        avatar: "",
-      },
-    },
-  });
-}
+const API_URL = "http://localhost:3000";
 
-export async function login({email, password}) {
-  const {data, error} = await supabase.auth.signInWithPassword({
+export const signup = async ({fullName, email, password}) => {
+  const response = await axios.post(`${API_URL}/signup`, {
+    fullName,
     email,
     password,
   });
+  return response.data;
+};
 
-  if (error) throw new Error(error.message);
-  return data;
-}
+export const login = async ({email, password}) => {
+  const response = await axios.post(`${API_URL}/login`, {email, password});
+  return response.data;
+};
 
-export async function logout() {
-  const {error} = await supabase.auth.signOut();
-  if (error) throw new Error(error.message);
-}
+export const logout = async () => {
+  const response = await axios.post(`${API_URL}/logout`);
+  return response.data;
+};

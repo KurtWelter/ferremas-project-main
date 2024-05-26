@@ -1,12 +1,13 @@
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
-import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
 
 import GlobalStyles from "./styles/GlobalStyles";
 import Dashboard from "./pages/Dashboard";
 import AppLayout from "./ui/AppLayout";
 //Import de carro de Compras.
 import Cart from "./pages/Cart";
+//Detalles de transaccion
+import TransactionDetails from "./pages/TransactionDetails";
 //Se encuentran los Imports de Equipos de Seguridad y Herramientas.
 import Products from "./pages/Products";
 //Imports de Usuarios, Cuenta y Login.
@@ -27,7 +28,6 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
       <GlobalStyles />
       <BrowserRouter>
         <Routes>
@@ -41,6 +41,7 @@ function App() {
 
             <Route path="login" element={<Login />} />
           </Route>
+          <Route path="transactiondetails" element={<TransactionDetails />} />
 
           <Route path="*" element={<PageNotFound />} />
         </Routes>
