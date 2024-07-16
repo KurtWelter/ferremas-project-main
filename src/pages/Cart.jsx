@@ -1,6 +1,7 @@
 import {useState} from "react";
 import styled from "styled-components";
 import {useCartStore} from "../store/CartStore";
+import {useNavigate} from "react-router-dom";
 import {realizarPago} from "../services/apiTransbank";
 
 const CartContainer = styled.div`
@@ -102,14 +103,38 @@ const TransferDetails = styled.div`
 `;
 
 function Cart() {
-  const {cart, incrementQuantity, decrementQuantity} = useCartStore();
+  const {
+    cart,
+    isNewUser,
+    discountApplied,
+    applyDiscount,
+    incrementQuantity,
+    decrementQuantity,
+  } = useCartStore();
   const [isLoading, setIsLoading] = useState(false);
   const [isTransferShown, setIsTransferShown] = useState(false);
+  const navigate = useNavigate();
 
-  const handlePayClick = async () => {
-    setIsLoading(true);
+  const calculateTotal = (cart, isNewUser, discountApplied) => {
+    let total = cart.reduce(
+      (acc, product) => acc + product.price * product.quantity,
+      0
+    );
+    if (isNewUser && !discountApplied) {
+      total *= 0.95; // Aplica un 5% de descuento
+    }
+    return total;
+  };
+
+  const totalPrice = calculateTotal(cart, isNewUser, discountApplied);
+
+  const handlePayment = async () => {
     try {
-      await realizarPago(cart);
+      setIsLoading(true);
+      const token = await realizarPago(cart);
+      applyDiscount(); // Marca el descuento como aplicado
+      console.log("Token obtenido:", token); // Verificar el token
+      navigate("/transactiondetails", {state: {token}}); // Asegúrate que el token no sea undefined
     } catch (error) {
       console.error("Error al iniciar la transacción:", error);
     } finally {
@@ -117,18 +142,13 @@ function Cart() {
     }
   };
 
-  const totalPrice = cart.reduce(
-    (total, product) => total + product.price * product.quantity,
-    0
-  );
-
   const handleTransferClick = () => {
     setIsTransferShown(!isTransferShown);
   };
 
   return (
     <CartContainer>
-      <h2>Shopping Cart</h2>
+      <h2>Carro de Compras</h2>
       <div>
         {cart.map((product) => (
           <ProductRow key={product.id}>
@@ -147,13 +167,13 @@ function Cart() {
           </ProductRow>
         ))}
       </div>
-      <TotalPrice>Total Price: ${totalPrice}</TotalPrice>
+      <TotalPrice>Total: ${totalPrice}</TotalPrice>
       <ButtonContainer>
-        <PayButton onClick={handlePayClick} disabled={isLoading}>
-          {isLoading ? "Processing payment..." : "Go to checkout"}
+        <PayButton onClick={handlePayment} disabled={isLoading}>
+          {isLoading ? "Procesando pago..." : "Ir a pagar"}
         </PayButton>
         <TransferButton onClick={handleTransferClick}>
-          Transfer to Third Party
+          Transferir a Terceros
         </TransferButton>
       </ButtonContainer>
       {isTransferShown && (

@@ -2,6 +2,8 @@ import {create} from "zustand";
 
 export const useCartStore = create((set) => ({
   cart: [],
+  isNewUser: true,
+  discountApplied: false, // Nuevo estado para rastrear si el descuento se aplicó
   addToCart: (product) =>
     set((state) => {
       const existingProduct = state.cart.find((p) => p.id === product.id);
@@ -16,6 +18,7 @@ export const useCartStore = create((set) => ({
         cart: [...state.cart, {...product, quantity: product.quantity || 1}],
       };
     }),
+  applyDiscount: () => set((state) => ({discountApplied: true})),
   removeFromCart: (productId) =>
     set((state) => ({
       cart: state.cart.filter((product) => product.id !== productId),
@@ -36,4 +39,14 @@ export const useCartStore = create((set) => ({
           : product
       ),
     })),
+  calculateTotal: (cart, isNewUser) => {
+    let total = cart.reduce(
+      (acc, product) => acc + product.price * product.quantity,
+      0
+    );
+    if (isNewUser) {
+      total *= 0.95; // Aplica un 5% de descuento
+    }
+    return total;
+  },
 }));
